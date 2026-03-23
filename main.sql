@@ -1,0 +1,135 @@
+-- Atividade 1
+CREATE TABLE
+    modelo (
+        id INT NOT NULL,
+        nome VARCHAR(50) NOT NULL,
+        descricao VARCHAR(100),
+        PRIMARY KEY (id),
+        UNIQUE (nome)
+    );
+
+CREATE TABLE
+    item (
+        num_serie INT NOT NULL,
+        valor_aquisicao INT NOT NULL CHECK (valor_aquisicao > 0),
+        modelo_id INT NOT NULL,
+        PRIMARY KEY (num_serie),
+        FOREIGN KEY (modelo_id) REFERENCES modelo (id)
+    );
+
+CREATE TABLE
+    cliente (
+        cpf CHAR(11) NOT NULL,
+        nome VARCHAR(50) NOT NULL CHECK (nome <> ''),
+        data_nasc DATE,
+        genero CHAR(1), -- M, F, O (outro)
+        PRIMARY KEY (cpf)
+    );
+
+CREATE TABLE
+    venda (
+        -- id INT NOT NULL,
+        data DATETIME NOT NULL,
+        valor INT NOT NULL CHECK (valor > 0),
+        cpf_comprador CHAR(11) NOT NULL,
+        id_item INT NOT NULL,
+        FOREIGN KEY (cpf_comprador) REFERENCES cliente (cpf),
+        FOREIGN KEY (id_item) REFERENCES item (num_serie),
+        PRIMARY KEY (cpf_comprador, id_item, data)
+    );
+
+INSERT INTO
+    modelo (id, nome, descricao)
+VALUES
+    (1, 'Modelo A', 'Descrição do Modelo A'),
+    (2, 'Modelo B', 'Descrição do Modelo B'),
+    (3, 'Modelo C', 'Descrição do Modelo C');
+
+INSERT INTO
+    item (num_serie, valor_aquisicao, modelo_id)
+VALUES
+    (1, 100, 1),
+    (2, 150, 1),
+    (3, 200, 1),
+    (4, 120, 1),
+    (5, 180, 2),
+    (6, 220, 2),
+    (7, 160, 2),
+    (8, 250, 3),
+    (9, 300, 3),
+    (10, 280, 3);
+
+INSERT INTO
+    cliente (cpf, nome, data_nasc, genero)
+VALUES
+    ('12345678901', 'João Silva', '1990-01-01', 'M'),
+    ('23456789012', 'Maria Santos', '1985-05-15', 'F'),
+    (
+        '34567890123',
+        'Pedro Oliveira',
+        '1992-10-20',
+        'M'
+    ),
+    ('45678901234', 'Ana Costa', '1988-03-10', 'O');
+
+INSERT INTO
+    venda (data, valor, cpf_comprador, id_item)
+VALUES
+    ('2023-01-01 00:00:00', 150, '12345678901', 1),
+    ('2023-01-02 00:00:00', 200, '23456789012', 2),
+    ('2023-01-03 00:00:00', 180, '34567890123', 5),
+    ('2023-01-04 00:00:00', 250, '45678901234', 8),
+    ('2023-01-05 00:00:00', 300, '12345678901', 9);
+
+SELECT
+    *
+FROM
+    modelo;
+
+SELECT
+    *
+FROM
+    item;
+
+SELECT
+    *
+FROM
+    cliente;
+
+SELECT
+    *
+FROM
+    venda;
+
+-- Ativ 2
+CREATE TABLE
+    avaliacao (
+        cpf_cliente CHAR(11) NOT NULL,
+        id_modelo INT NOT NULL,
+        nota INT NOT NULL CHECK (
+            nota >= 0
+            AND nota <= 5
+        ),
+        comentario VARCHAR(255),
+        PRIMARY KEY (cpf_cliente, id_modelo),
+        FOREIGN KEY (cpf_cliente) REFERENCES cliente (cpf),
+        FOREIGN KEY (id_modelo) REFERENCES modelo (id)
+    );
+
+INSERT INTO
+    avaliacao (cpf_cliente, id_modelo, nota, comentario)
+VALUES
+    ('23456789012',1,0,'Preferia uma bomba escondida'),
+    ('12345678901', 1, 1, 'Horrível'),
+    ('34567890123', 1, 2, 'Ok.'),
+    ('45678901234', 1, 3, 'Satisfeito.'),
+    ('12345678901', 2, 4, 'Show de bola'),
+    ('23456789012', 2, 5, 'Perfeito');
+
+SELECT
+    id_modelo as "ID do modelo",
+    AVG(nota) AS "Nota média"
+FROM
+    avaliacao
+GROUP BY
+    id_modelo;
