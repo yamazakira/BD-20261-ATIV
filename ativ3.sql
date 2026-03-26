@@ -1,7 +1,7 @@
-CREATE MATERIALIZED VIEW lucro_modelo AS
+CREATE TABLE lucro_modelo AS
 SELECT
     M.nome AS modelo,
-    COALESCE(SUM(V.valor - I.valor_aquisicao), 0) AS lucro_acumulado
+    COALESCE(SUM(V.valor - I.valor_aquisicao),0)         AS lucro_acumulado
 FROM
     modelo M
 LEFT JOIN item I ON I.modelo_id = M.id
@@ -10,6 +10,9 @@ GROUP BY
     M.nome
 ORDER BY
     lucro_acumulado DESC;
+
+SELECT *
+FROM lucro_modelo;
 
 SELECT *
 FROM lucro_modelo;
