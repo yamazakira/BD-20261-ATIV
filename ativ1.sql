@@ -2,7 +2,7 @@
 CREATE TABLE
     modelo (
         id INT NOT NULL CHECK (id > 0),
-        nome VARCHAR(50) NOT NULL UNIQUE CHECK (nome <> ''),
+        nome VARCHAR(50) NOT NULL UNIQUE CHECK (TRIM(nome) <> ''),
         descricao VARCHAR(100),
         PRIMARY KEY (id)
     );
@@ -18,7 +18,7 @@ CREATE TABLE
 
 CREATE TABLE
     cliente (
-        cpf CHAR(11) NOT NULL CHECK (cpf NOT LIKE '%[^0-9]%' AND LENGTH(cpf) = 11),
+        cpf CHAR(11) NOT NULL CHECK (cpf NOT LIKE '%[^0-9]%' AND LENGTH(TRIM(cpf)) = 11),
         nome VARCHAR(50) NOT NULL CHECK (nome <> ''),
         data_nasc DATE NULL,
         genero CHAR(1) NULL CHECK (genero IN ('M','F','O') OR genero IS NULL),
@@ -29,7 +29,7 @@ CREATE TABLE
     venda (
         data DATETIME NOT NULL,
         valor DECIMAL(10,2) NOT NULL CHECK (valor > 0),
-        cpf_comprador CHAR(11) NOT NULL CHECK (cpf_comprador NOT LIKE '%[^0-9]%' AND LENGTH(cpf_comprador) = 11),
+        cpf_comprador CHAR(11) NOT NULL CHECK (cpf_comprador NOT LIKE '%[^0-9]%' AND LENGTH(TRIM(cpf_comprador)) = 11),
         id_item INT NOT NULL,
         FOREIGN KEY (cpf_comprador) REFERENCES cliente (cpf),
         FOREIGN KEY (id_item) REFERENCES item (num_serie),
