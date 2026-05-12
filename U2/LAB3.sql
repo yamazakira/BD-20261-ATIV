@@ -2,15 +2,15 @@ CREATE DATABASE seguradora;
 USE seguradora;
 
 CREATE TABLE Cliente (
-    cpf CHAR(11) PRIMARY KEY,
+    cpf CHAR(11) PRIMARY KEY CHECK (cpf NOT LIKE '%[^0-9]%' AND LENGTH(TRIM(cpf)) = 11),
     nome VARCHAR(100) NOT NULL,
-    endereco VARCHAR(200) NOT NULL,
-    pontuacao INT NULL
+    endereco VARCHAR(200) NOT NULL
+    -- pontuacao INT NULL
 );
 
 CREATE TABLE Telefones (
     cliente_cpf CHAR(11),
-    telefone VARCHAR(20),
+    telefone VARCHAR(20) CHECK (telefone NOT LIKE '%[^0-9]%' AND LENGTH(TRIM(telefone)) > 0),
 
     PRIMARY KEY (cliente_cpf, telefone),
 
@@ -21,7 +21,7 @@ CREATE TABLE Telefones (
 );
 
 CREATE TABLE Corretor (
-    cpf CHAR(11) PRIMARY KEY,
+    cpf CHAR(11) PRIMARY KEY CHECK (cpf NOT LIKE '%[^0-9]%' AND LENGTH(TRIM(cpf)) = 11),
     -- numero_susep INT UNIQUE NOT NULL,
     numero_susep VARCHAR(30) UNIQUE NOT NULL,
     nome VARCHAR(100) NOT NULL
@@ -30,23 +30,23 @@ CREATE TABLE Corretor (
 -- disjunção total de bens
 CREATE TABLE Automovel (
     codigo_bem INT PRIMARY KEY,
-    valor DECIMAL(10,2) NOT NULL
+    valor DECIMAL(10,2) NOT NULL CHECK (valor > 0),
 
-    modelo VARCHAR(100) NOT NULL,
+    modelo VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE Imovel (
     codigo_bem INT PRIMARY KEY,
-    valor DECIMAL(10,2) NOT NULL
+    valor DECIMAL(10,2) NOT NULL CHECK (valor > 0),
 
-    localizacao VARCHAR(200) NOT NULL,
+    localizacao VARCHAR(200) NOT NULL
 );
 
 CREATE TABLE Seguro (
     numero_apolice INT PRIMARY KEY,
     periodo_cobertura VARCHAR(100) NOT NULL,
     data_inicio DATE NOT NULL,
-    franquia DECIMAL(10,2) NOT NULL,
+    franquia DECIMAL(10,2) NOT NULL CHECK (franquia > 0),
     automovel_codigo_bem INT NULL,
     imovel_codigo_bem INT NULL,
 
@@ -78,7 +78,7 @@ CREATE TABLE Seguro_Aquisicao (
 );
 
 CREATE TABLE Perito (
-    cpf CHAR(11) PRIMARY KEY,
+    cpf CHAR(11) PRIMARY KEY CHECK (cpf NOT LIKE '%[^0-9]%' AND LENGTH(TRIM(cpf)) = 11),
     nome VARCHAR(100) NOT NULL,
     especialidade ENUM(
         'escpecialidade',
@@ -90,7 +90,7 @@ CREATE TABLE Sinistro (
     numero INT PRIMARY KEY,
     seguro_apolice INT NOT NULL,
     descricao TEXT NOT NULL,
-    valor DECIMAL(12,2) NOT NULL,
+    valor DECIMAL(12,2) NOT NULL CHECK (valor > 0),
 
     CONSTRAINT fk_sinistro_seguro
         FOREIGN KEY (seguro_apolice)
